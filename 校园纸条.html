@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园纸条交换</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 25px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .tab-button.active {
+            color: #2575fc;
+            border-bottom: 3px solid #2575fc;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .photo-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .photo-upload:hover {
+            border-color: #2575fc;
+            background-color: #f8faff;
+        }
+        
+        .photo-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f1f3f6;
+            color: #555;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .note-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .note-photo {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .note-intro {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .note-contact {
+            background-color: #f8faff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #2575fc;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        
+        .empty-state img {
+            max-width: 150px;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+        
+        .match-success {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions {
+            background-color: #f8faff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>校园纸条交换</h1>
+            <p class="tagline">留下你的纸条，邂逅一份校园缘分</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="create">创建纸条</button>
+                <button class="tab-button" data-tab="draw">抽取纸条</button>
+                <button class="tab-button" data-tab="my-notes">我的纸条</button>
+            </div>
+            
+            <!-- 创建纸条标签页 -->
+            <div class="tab-content active" id="create-tab">
+                <div class="instructions">
+                    <p>创建你的个人纸条，其他同学可以随机抽取。当有人抽中你的纸条时，你会收到通知！</p>
+                </div>
+                
+                <form id="note-form">
+                    <div class="form-group">
+                        <label for="gender">你的性别</label>
+                        <select id="gender" required>
+                            <option value="">请选择</option>
+                            <option value="male">男生</option>
+                            <option value="female">女生</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="photo">上传照片</label>
+                        <div class="photo-upload" id="photo-upload-area">
+                            <p>点击上传照片或拖拽图片到这里</p>
+                            <input type="file" id="photo" accept="image/*" style="display: none;">
+                            <img id="photo-preview" class="photo-preview">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact">联系方式 (微信/QQ)</label>
+                        <input type="text" id="contact" placeholder="请输入联系方式" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="introduction">自我介绍</label>
+                        <textarea id="introduction" placeholder="介绍一下自己，让抽中纸条的同学更了解你..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">创建我的纸条</button>
+                </form>
+            </div>
+            
+            <!-- 抽取纸条标签页 -->
+            <div class="tab-content" id="draw-tab">
+                <div class="instructions">
+                    <p>点击下方按钮，随机抽取一张异性同学的纸条。如果你们互相抽取，就能看到彼此的联系方式！</p>
+                </div>
+                
+                <div id="draw-result">
+                    <div class="empty-state" id="draw-empty">
+                        <div style="font-size: 60px; margin-bottom: 20px;">📝</div>
+                        <p>点击按钮抽取一张纸条</p>
+                    </div>
+                    
+                    <div id="drawn-note" style="display: none;">
+                        <!-- 抽取到的纸条会显示在这里 -->
+                    </div>
+                </div>
+                
+                <button class="btn" id="draw-btn">随机抽取一张纸条</button>
+            </div>
+            
+            <!-- 我的纸条标签页 -->
+            <div class="tab-content" id="my-notes-tab">
+                <div id="my-notes-list">
+                    <!-- 用户创建的纸条会显示在这里 -->
+                </div>
+                
+                <div class="empty-state" id="no-notes-message">
+                    <div style="font-size: 60px; margin-bottom: 20px;">➕</div>
+                    <p>你还没有创建任何纸条</p>
+                    <p>去"创建纸条"页面创建你的第一张纸条吧</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 切换标签页
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新按钮状态
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新内容显示
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // 如果是"我的纸条"标签页，刷新列表
+                    if (tabId === 'my-notes') {
+                        displayMyNotes();
+                    }
+                });
+            });
+            
+            // 照片上传功能
+            const photoUploadArea = document.getElementById('photo-upload-area');
+            const photoInput = document.getElementById('photo');
+            const photoPreview = document.getElementById('photo-preview');
+            
+            photoUploadArea.addEventListener('click', function() {
+                photoInput.click();
+            });
+            
+            photoInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        photoPreview.src = e.target.result;
+                        photoPreview.style.display = 'block';
+                        photoUploadArea.querySelector('p').textContent = '点击更换照片';
+                    };
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            // 拖放上传功能
+            photoUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#2575fc';
+                this.style.backgroundColor = '#f8faff';
+            });
+            
+            photoUploadArea.addEventListener('dragleave', function() {
+                this.style.borderColor = '#ddd';
+                this.style.backgroundColor = '';
+            });
+            
+            photoUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#ddd';
+                this.style.backgroundColor = '';
+                
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    photoInput.files = e.dataTransfer.files;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        photoPreview.src = e.target.result;
+                        photoPreview.style.display = 'block';
+                        photoUploadArea.querySelector('p').textContent = '点击更换照片';
+                    };
+                    
+                    reader.readAsDataURL(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // 创建纸条表单提交
+            document.getElementById('note-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const gender = document.getElementById('gender').value;
+                const contact = document.getElementById('contact').value;
+                const introduction = document.getElementById('introduction').value;
+                const photo = document.getElementById('photo-preview').src;
+                
+                if (!gender || !contact || !introduction) {
+                    alert('请填写完整信息！');
+                    return;
+                }
+                
+                if (photo.includes('data:image')) {
+                    // 照片已上传
+                } else {
+                    alert('请上传一张照片！');
+                    return;
+                }
+                
+                // 创建纸条对象
+                const note = {
+                    id: Date.now().toString(),
+                    gender: gender,
+                    contact: contact,
+                    introduction: introduction,
+                    photo: photo,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // 保存到localStorage
+                saveNote(note);
+                
+                // 重置表单
+                document.getElementById('note-form').reset();
+                document.getElementById('photo-preview').style.display = 'none';
+                document.getElementById('photo-preview').src = '';
+                photoUploadArea.querySelector('p').textContent = '点击上传照片或拖拽图片到这里';
+                
+                alert('纸条创建成功！');
+                
+                // 切换到"我的纸条"标签页
+                document.querySelector('.tab-button[data-tab="my-notes"]').click();
+            });
+            
+            // 抽取纸条功能
+            document.getElementById('draw-btn').addEventListener('click', function() {
+                const userGender = prompt('请选择你的性别以抽取异性纸条：\n1. 男生（抽取女生纸条）\n2. 女生（抽取男生纸条）');
+                
+                if (!userGender) return;
+                
+                let targetGender;
+                if (userGender === '1') {
+                    targetGender = 'female';
+                } else if (userGender === '2') {
+                    targetGender = 'male';
+                } else {
+                    alert('请输入有效的选项（1或2）');
+                    return;
+                }
+                
+                // 从localStorage获取所有纸条
+                const notes = getAllNotes();
+                
+                // 过滤出异性纸条
+                const targetNotes = notes.filter(note => note.gender === targetGender);
+                
+                if (targetNotes.length === 0) {
+                    alert('暂时没有可抽取的纸条，请稍后再试！');
+                    return;
+                }
+                
+                // 随机抽取一张纸条
+                const randomIndex = Math.floor(Math.random() * targetNotes.length);
+                const drawnNote = targetNotes[randomIndex];
+                
+                // 显示抽取结果
+                displayDrawnNote(drawnNote);
+                
+                // 记录抽取历史
+                recordDrawHistory(drawnNote.id);
+            });
+            
+            // 保存纸条到localStorage
+            function saveNote(note) {
+                const notes = JSON.parse(localStorage.getItem('campusNotes') || '[]');
+                notes.push(note);
+                localStorage.setItem('campusNotes', JSON.stringify(notes));
+            }
+            
+            // 从localStorage获取所有纸条
+            function getAllNotes() {
+                return JSON.parse(localStorage.getItem('campusNotes') || '[]');
+            }
+            
+            // 显示抽取到的纸条
+            function displayDrawnNote(note) {
+                const drawResult = document.getElementById('draw-result');
+                const drawnNoteDiv = document.getElementById('drawn-note');
+                const drawEmpty = document.getElementById('draw-empty');
+                
+                drawEmpty.style.display = 'none';
+                drawnNoteDiv.style.display = 'block';
+                
+                // 检查是否互相抽取（简化版：只要之前抽过对方的纸条就算匹配）
+                const drawHistory = JSON.parse(localStorage.getItem('drawHistory') || '[]');
+                const isMatched = drawHistory.includes(note.id);
+                
+                drawnNoteDiv.innerHTML = `
+                    ${isMatched ? '<div class="match-success">🎉 恭喜！你们互相抽取了纸条</div>' : ''}
+                    <div class="note-card">
+                        <img src="${note.photo}" class="note-photo" alt="纸条照片">
+                        <div class="note-intro">${note.introduction}</div>
+                        ${isMatched ? 
+                            `<div class="note-contact">
+                                <strong>联系方式:</strong> ${note.contact}
+                            </div>` : 
+                            '<p style="color: #777; text-align: center;">如果对方也抽取了你的纸条，就能看到联系方式</p>'
+                        }
+                    </div>
+                `;
+            }
+            
+            // 记录抽取历史
+            function recordDrawHistory(noteId) {
+                const drawHistory = JSON.parse(localStorage.getItem('drawHistory') || '[]');
+                if (!drawHistory.includes(noteId)) {
+                    drawHistory.push(noteId);
+                    localStorage.setItem('drawHistory', JSON.stringify(drawHistory));
+                }
+            }
+            
+            // 显示用户创建的纸条
+            function displayMyNotes() {
+                const myNotesList = document.getElementById('my-notes-list');
+                const noNotesMessage = document.getElementById('no-notes-message');
+                const notes = getAllNotes();
+                
+                if (notes.length === 0) {
+                    myNotesList.innerHTML = '';
+                    noNotesMessage.style.display = 'block';
+                    return;
+                }
+                
+                noNotesMessage.style.display = 'none';
+                
+                let html = '';
+                notes.forEach(note => {
+                    html += `
+                        <div class="note-card">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>${note.gender === 'male' ? '男生' : '女生'}纸条</span>
+                                <span style="color: #777; font-size: 0.9rem;">${new Date(note.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <img src="${note.photo}" class="note-photo" alt="我的纸条照片">
+                            <div class="note-intro">${note.introduction}</div>
+                            <div class="note-contact">
+                                <strong>我的联系方式:</strong> ${note.contact}
+                            </div>
+                            <button class="btn btn-secondary" onclick="deleteNote('${note.id}')" style="margin-top: 15px;">删除这张纸条</button>
+                        </div>
+                    `;
+                });
+                
+                myNotesList.innerHTML = html;
+            }
+            
+            // 全局函数：删除纸条
+            window.deleteNote = function(noteId) {
+                if (confirm('确定要删除这张纸条吗？')) {
+                    const notes = getAllNotes();
+                    const updatedNotes = notes.filter(note => note.id !== noteId);
+                    localStorage.setItem('campusNotes', JSON.stringify(updatedNotes));
+                    displayMyNotes();
+                }
+            };
+            
+            // 初始化显示
+            displayMyNotes();
+        });
+    </script>
+</body>
+</html>
